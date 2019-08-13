@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ScheduledTaskService {
 
+    SchedulerFactory schedulerFactory = new StdSchedulerFactory();
     /**
      * 无参的定时任务
      */
@@ -30,7 +31,7 @@ public class ScheduledTaskService {
 
         try {
             // 1、创建调度器Scheduler
-            SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+//            SchedulerFactory schedulerFactory = new StdSchedulerFactory();
             Scheduler scheduler = schedulerFactory.getScheduler();
             // 2、创建JobDetail实例，并与PrintWordsJob类绑定(Job执行内容)
             JobDetail jobDetail = JobBuilder.newJob(MyJob.class)
@@ -95,14 +96,14 @@ public class ScheduledTaskService {
 
             JobDetail jobDetail = JobBuilder.newJob(MyJob2.class)
                     .setJobData(jobDataMap)     ///在此绑定数据，传给Job任务类
-                    .withIdentity("job2", "group1").build();
+                    .withIdentity("job1", "group1").build();
 
             /// 在这里要进行一下startTime的校验，不能早于当前时间。只能大于等于当前时间。
             /// 且要加上几秒钟，作为程序运行时间缓冲。
             Date realDateToSend = DateUtil.validateDateTime(dateToSend);
 
             // 3、构建Trigger实例,每隔1s执行一次
-            Trigger trigger = TriggerBuilder.newTrigger().withIdentity("trigger2", "triggerGroup1")
+            Trigger trigger = TriggerBuilder.newTrigger().withIdentity("trigger1", "triggerGroup1")
 //                    .startNow()//立即生效
                     .startAt(realDateToSend)
 //                    .endAt(date)
@@ -127,5 +128,30 @@ public class ScheduledTaskService {
             e.printStackTrace();
         }
     }
+
+    /**
+     * @Description: 移除一个任务
+     *
+     * @param jobName
+     * @param jobGroupName
+     * @param triggerName
+     * @param triggerGroupName
+     */
+    public void removeJob(String jobName, String jobGroupName, String triggerName, String triggerGroupName) {
+
+        try {
+            Scheduler sched = schedulerFactory.getScheduler();
+
+            TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName);
+
+            sched.pauseTrigger(triggerKey);// 停止触发器
+            sched.unscheduleJob(triggerKey);// 移除触发器
+            sched.deleteJob(JobKey.jobKey(jobName, jobGroupName));// 删除任务
+            log.info("现在已经删除任务===================");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

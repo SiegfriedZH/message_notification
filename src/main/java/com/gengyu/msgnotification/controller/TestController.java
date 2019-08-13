@@ -80,4 +80,17 @@ public class TestController {
         return "test06";
     }
 
+    @GetMapping("/test07")
+    public String test07(@RequestParam("jobName") String jobName,
+                         @RequestParam("jobGroupName") String jobGroupName,
+                         @RequestParam("triggerName") String triggerName,
+                         @RequestParam("triggerGroupName") String triggerGroupName){
+
+        log.info("接收到的4个参数为：{}，{}，{}，{}", jobName, jobGroupName, triggerName, triggerGroupName);
+        log.info("现在调用删除任务");
+        scheduledTaskService.removeJob(jobName, jobGroupName, triggerName, triggerGroupName);
+        log.info("删除任务完毕");
+        return "test07";
+    }
+
 }
