@@ -16,8 +16,6 @@ import javax.validation.constraints.Email;
 @Slf4j
 public class MyJob2 implements Job {
 
-
-
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 

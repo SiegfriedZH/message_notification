@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Siegfried GENG
@@ -56,7 +54,7 @@ public class EmailService {
 
             String from = emailConfig.getFrom();
             helper.setFrom(from);
-            helper.setSubject(emailInfo.getTitle());
+            helper.setSubject(emailInfo.getSubject());
             String content = "<html><head></head><body><h3 style=\"color:red\">"
                     + emailInfo.getContent()
                     +"</h3></body></html>";
@@ -81,5 +79,7 @@ public class EmailService {
             log.error(e.getMessage());
         }
     }
+
+
 
 }

@@ -1,13 +1,18 @@
 package com.gengyu.msgnotification.service;
 
 import com.gengyu.msgnotification.entity.EmailInfo;
+import com.gengyu.msgnotification.entity.EmailTaskInfo;
+import com.gengyu.msgnotification.repository.EmailTaskInfoRepository;
 import com.gengyu.msgnotification.timedJob.MyJob;
 import com.gengyu.msgnotification.timedJob.MyJob2;
 import com.gengyu.msgnotification.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class ScheduledTaskService {
+
+    @Autowired
+    private EmailTaskInfoRepository emailTaskInfoRepository;
 
     SchedulerFactory schedulerFactory = new StdSchedulerFactory();
     /**
@@ -67,16 +75,23 @@ public class ScheduledTaskService {
      * 有参的定时任务，将EmailInfo传给定时任务类，定时任务类再调用发邮件的Service。
      * @param emailInfo
      */
+    @Transactional
     public void scheduledTask(EmailInfo emailInfo){
 
         try {
 
             String toList = emailInfo.getToList();
             String content = emailInfo.getContent();
-            String subject = emailInfo.getTitle();
+            String subject = emailInfo.getSubject();
             String timeToSend = emailInfo.getTimeToSend();
             Date dateToSend = DateUtil.convertStrToDate(timeToSend);
             Integer interval = emailInfo.getInterval(); /// 间隔的秒数
+
+            String taskName = emailInfo.getTaskName();
+            String jobName = "job"+taskName;
+            String jobGroupName = "jgroup"+taskName;
+            String triggerName = "tgr"+taskName;
+            String triggerGroupName = "tgrgoup"+taskName;
 
             log.info("ScheduledTask方法接收到的参数为：{}, {}, {}, {}, {}, {}",
                     toList, content, subject, timeToSend, dateToSend, interval);
@@ -96,14 +111,18 @@ public class ScheduledTaskService {
 
             JobDetail jobDetail = JobBuilder.newJob(MyJob2.class)
                     .setJobData(jobDataMap)     ///在此绑定数据，传给Job任务类
-                    .withIdentity("job1", "group1").build();
+//                    .withIdentity("job1", "group1")
+                    .withIdentity(jobName, jobGroupName)
+                    .build();
 
             /// 在这里要进行一下startTime的校验，不能早于当前时间。只能大于等于当前时间。
             /// 且要加上几秒钟，作为程序运行时间缓冲。
             Date realDateToSend = DateUtil.validateDateTime(dateToSend);
 
             // 3、构建Trigger实例,每隔1s执行一次
-            Trigger trigger = TriggerBuilder.newTrigger().withIdentity("trigger1", "triggerGroup1")
+            Trigger trigger = TriggerBuilder.newTrigger()
+//                    .withIdentity("trigger1", "triggerGroup1")
+                    .withIdentity(triggerName, triggerGroupName)
 //                    .startNow()//立即生效
                     .startAt(realDateToSend)
 //                    .endAt(date)
@@ -119,9 +138,21 @@ public class ScheduledTaskService {
             scheduler.start();
 
             //睡眠
-            TimeUnit.MINUTES.sleep(3);
-            scheduler.shutdown();
-            System.out.println("--------scheduler shutdown ! ------------");
+//            TimeUnit.MINUTES.sleep(3);
+//            scheduler.shutdown();
+//            System.out.println("--------scheduler shutdown ! ------------");
+
+            /// 入库操作
+            EmailTaskInfo emailTaskInfo = new EmailTaskInfo();
+            BeanUtils.copyProperties(emailInfo, emailTaskInfo);
+            emailTaskInfo.setJobName(jobName);
+            emailTaskInfo.setJobGroupName(jobGroupName);
+            emailTaskInfo.setTriggerName(triggerName);
+            emailTaskInfo.setTriggerGroupName(triggerGroupName);
+            emailTaskInfoRepository.save(emailTaskInfo);
+            log.info("该EmailTaskInfo已入库");
+
+
         } catch (SchedulerException e) {
             e.printStackTrace();
         } catch (Exception e) {

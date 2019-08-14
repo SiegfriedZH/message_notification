@@ -1,24 +1,21 @@
 package com.gengyu.msgnotification.entity;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Date;
+import javax.persistence.*;
 
 /**
  * @author Siegfried GENG
- * @date 2019/8/13 - 0:48
+ * @date 2019/8/13 - 22:39
  */
 @Data
-@Table
+@Table(name="email_task_info")
 @Entity
-public class EmailInfo {
+public class EmailTaskInfo {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /// 用户为每次邮件任务所起的名字，须唯一。
@@ -42,4 +39,13 @@ public class EmailInfo {
 
     ///发邮件间隔时间（小时）
     private Integer interval;
+
+    /*
+    以下四个是定时任务需要的任务识别字段
+     */
+    private String jobName;
+    private String jobGroupName;
+    private String triggerName;
+    private String triggerGroupName;
+
 }
