@@ -20,9 +20,9 @@ public interface EmailTaskInfoRepository extends JpaRepository<EmailTaskInfo, In
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE email_task_info e SET e.status=1 WHERE e.id = ?1"
+    @Query(value = "UPDATE email_task_info e SET e.status=?2 WHERE e.id = ?1"
             ,nativeQuery = true)
-    Integer cancelEmailTask(Integer id);
+    Integer cancelEmailTask(Integer id, Integer toStatus);
 
 
 }

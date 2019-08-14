@@ -2,6 +2,7 @@ package com.gengyu.msgnotification.service;
 
 import com.gengyu.msgnotification.entity.EmailInfo;
 import com.gengyu.msgnotification.entity.EmailTaskInfo;
+import com.gengyu.msgnotification.enums.EmailTaskStatusEnum;
 import com.gengyu.msgnotification.repository.EmailTaskInfoRepository;
 import com.gengyu.msgnotification.timedJob.MyJob;
 import com.gengyu.msgnotification.timedJob.MyJob2;
@@ -150,7 +151,7 @@ public class ScheduledTaskService {
                     .setJobGroupName(jobGroupName)
                     .setTriggerName(triggerName)
                     .setTriggerGroupName(triggerGroupName)
-                    .setStatus(0);  /// 因为这是启动状态的任务，所以设置为0
+                    .setStatus(EmailTaskStatusEnum.EMAIL_TASK_STATUS_ENUM_ON.getCode());  /// 因为这是启动状态的任务，所以设置为0
             log.info("========入库前包装好的emailTaskInfo对象为:{}", emailTaskInfo);
             emailTaskInfoRepository.save(emailTaskInfo);
             log.info("该EmailTaskInfo已入库");
@@ -187,7 +188,8 @@ public class ScheduledTaskService {
             EmailTaskInfo emailTaskInfo = emailTaskInfoRepository.findByJobName(jobName);
             if(emailTaskInfo != null && emailTaskInfo.getStatus() == 0){
                 log.info("=====得到的emailTaskInfo不为空，且status为0，现在修改状态");
-                emailTaskInfoRepository.cancelEmailTask(emailTaskInfo.getId());
+                emailTaskInfoRepository.cancelEmailTask(emailTaskInfo.getId(),
+                        EmailTaskStatusEnum.EMAIL_TASK_STATUS_ENUM_OFF.getCode());
                 log.info("=====已修改状态为1");
             }
 

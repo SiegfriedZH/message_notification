@@ -3,6 +3,7 @@ package com.gengyu.msgnotification.controller;
 import com.gengyu.msgnotification.entity.EmailEntity;
 import com.gengyu.msgnotification.entity.EmailInfo;
 import com.gengyu.msgnotification.entity.EmailTaskInfo;
+import com.gengyu.msgnotification.enums.EmailTaskStatusEnum;
 import com.gengyu.msgnotification.repository.EmailInfoRepository;
 import com.gengyu.msgnotification.entity.ResponseEntity;
 import com.gengyu.msgnotification.repository.EmailTaskInfoRepository;
@@ -257,7 +258,8 @@ public class TestController {
         if (emailTaskInfo==null){
             return "未找到，失败";
         }
-        emailTaskInfoRepository.cancelEmailTask(emailTaskInfo.getId());
+        emailTaskInfoRepository.cancelEmailTask(emailTaskInfo.getId(),
+                EmailTaskStatusEnum.EMAIL_TASK_STATUS_ENUM_OFF.getCode());
         log.info("现已修改数据库状态为1。。。");
         EmailTaskInfo emailTaskInfo1 = emailTaskInfoRepository.findByJobName(jobName);
         log.info("修改后的emailTaskInfo为："+emailTaskInfo1);

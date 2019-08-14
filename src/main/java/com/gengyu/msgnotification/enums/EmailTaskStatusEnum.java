@@ -10,8 +10,8 @@ import lombok.Getter;
 @Getter
 public enum EmailTaskStatusEnum {
 
-    ON(0, "on"),
-    OFF(1, "off"),
+    EMAIL_TASK_STATUS_ENUM_ON(0, "on"),
+    EMAIL_TASK_STATUS_ENUM_OFF(1, "off"),
     ;
 
     EmailTaskStatusEnum(Integer code, String msg){
