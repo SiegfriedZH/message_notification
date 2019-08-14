@@ -85,7 +85,7 @@ public class ScheduledTaskService {
             String subject = emailInfo.getSubject();
             String timeToSend = emailInfo.getTimeToSend();
             Date dateToSend = DateUtil.convertStrToDate(timeToSend);
-            Integer interval = emailInfo.getInterval(); /// 间隔的秒数
+            Integer interval = emailInfo.getIntervalTime(); /// 间隔的秒数
 
             String taskName = emailInfo.getTaskName();
             String jobName = "job"+taskName;
@@ -141,14 +141,17 @@ public class ScheduledTaskService {
 //            TimeUnit.MINUTES.sleep(3);
 //            scheduler.shutdown();
 //            System.out.println("--------scheduler shutdown ! ------------");
+            /// 现在不用这种方式停止，而是一直定时发，直到调用方法取消任务，才停止！
 
             /// 入库操作
             EmailTaskInfo emailTaskInfo = new EmailTaskInfo();
             BeanUtils.copyProperties(emailInfo, emailTaskInfo);
-            emailTaskInfo.setJobName(jobName);
-            emailTaskInfo.setJobGroupName(jobGroupName);
-            emailTaskInfo.setTriggerName(triggerName);
-            emailTaskInfo.setTriggerGroupName(triggerGroupName);
+            emailTaskInfo.setJobName(jobName)
+                    .setJobGroupName(jobGroupName)
+                    .setTriggerName(triggerName)
+                    .setTriggerGroupName(triggerGroupName)
+                    .setStatus(0);  /// 因为这是启动状态的任务，所以设置为0
+            log.info("========入库前包装好的emailTaskInfo对象为:{}", emailTaskInfo);
             emailTaskInfoRepository.save(emailTaskInfo);
             log.info("该EmailTaskInfo已入库");
 
@@ -179,6 +182,15 @@ public class ScheduledTaskService {
             sched.unscheduleJob(triggerKey);// 移除触发器
             sched.deleteJob(JobKey.jobKey(jobName, jobGroupName));// 删除任务
             log.info("现在已经删除任务===================");
+
+            /// 从库中删除（实为修改状态）
+            EmailTaskInfo emailTaskInfo = emailTaskInfoRepository.findByJobName(jobName);
+            if(emailTaskInfo != null && emailTaskInfo.getStatus() == 0){
+                log.info("=====得到的emailTaskInfo不为空，且status为0，现在修改状态");
+                emailTaskInfoRepository.cancelEmailTask(emailTaskInfo.getId());
+                log.info("=====已修改状态为1");
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

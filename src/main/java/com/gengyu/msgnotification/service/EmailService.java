@@ -61,6 +61,8 @@ public class EmailService {
             log.info("拼接好的邮件内容为:{}", content);
             helper.setText(content, true);
 
+            helper.setCc(new InternetAddress(emailConfig.getFrom()));
+
             String toListStr = emailInfo.getToList();
 
             /// 经测试，多个收件人的时候，不能直接helper.setTo(收件人列表数据)，而应该采用下面的方法

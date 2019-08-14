@@ -10,6 +10,7 @@ import com.gengyu.msgnotification.service.EmailService;
 import com.gengyu.msgnotification.service.ScheduledTaskService;
 import com.gengyu.msgnotification.utils.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -95,12 +96,13 @@ public class TestController {
     }
 
     /**
-     * 删除指定名字的任务，实际会用
+     * 删除指定名字的任务（停止发邮件），实际会用
+     * 并修改数据库中对应的状态为1
      * @param taskName
      * @return
      */
-    @GetMapping("/test07_1")
-    public String test071(@RequestParam("taskName") String taskName){
+    @GetMapping("/test07_1/{taskName}")
+    public String test071(@PathVariable("taskName") String taskName){
 
         log.info("传入的taskName为：{}", taskName);
 
@@ -111,15 +113,16 @@ public class TestController {
             String jobGroupName = emailTaskInfo.getJobGroupName();
             String triggerName = emailTaskInfo.getTriggerName();
             String triggerGroupName = emailTaskInfo.getTriggerGroupName();
+
             log.info("4个参数为：{}，{}，{}，{}", jobName, jobGroupName, triggerName, triggerGroupName);
             log.info("现在调用删除任务");
             scheduledTaskService.removeJob(jobName, jobGroupName, triggerName, triggerGroupName);
             log.info("删除任务完毕");
         } else {
-            log.info("取出的emailTaskInfo为null");
+            log.info("取出的emailTaskInfo为null!");
         }
 
-        return "test071";
+        return "test07_1";
 
     }
 
@@ -145,7 +148,7 @@ public class TestController {
     }
 
     /**
-     * 存入emailTaskInfo
+     * 保存一个emailTaskInfo
      * @param emailTaskInfo
      * @return
      */
@@ -161,6 +164,11 @@ public class TestController {
         }
     }
 
+    /**
+     * 保存一个EmailInfo
+     * @param emailInfo
+     * @return
+     */
     @PostMapping("/test09")
     public ResponseEntity<EmailInfo> test09(@RequestBody EmailInfo emailInfo){
         log.info("传入的emailTaskInfo为：{}", emailInfo);
@@ -173,5 +181,86 @@ public class TestController {
         }
     }
 
+    /**
+     * 传入一个EmailInfo，转换为EmailTaskInfo之后，存库
+     * @param emailInfo
+     * @return
+     */
+    @PostMapping("/test10")
+    public ResponseEntity<EmailInfo> test10(@RequestBody EmailInfo emailInfo){
+        log.info("传入的emailTaskInfo为：{}", emailInfo);
 
+        EmailTaskInfo emailTaskInfo = new EmailTaskInfo();
+        BeanUtils.copyProperties(emailInfo, emailTaskInfo);
+        emailTaskInfo.setJobName("jobName")
+                .setJobGroupName("jobGroupName")
+                .setTriggerName("trigger")
+                .setTriggerGroupName("triggerGroup");
+
+        log.info("组装好的emailTaskInfo对象为:{}",emailTaskInfo);
+
+        EmailTaskInfo emailTaskInfo1 = emailTaskInfoRepository.save(emailTaskInfo);
+
+        log.info("存入的emailTaskInfo1为：{}",emailTaskInfo1);
+        if (null != emailTaskInfo1){
+            return ResultUtil.succeeded(emailTaskInfo1);
+        }else{
+            return ResultUtil.failed();
+        }
+    }
+
+    /**
+     * 从库中删除指定任务名的任务。
+     * @param taskName
+     * @return
+     */
+    @GetMapping("/test11/{taskName}")
+    public String deleteTaskByTaskName(@PathVariable("taskName") String taskName){
+
+        EmailTaskInfo emailTaskInfo = emailTaskInfoRepository.findByTaskName(taskName);
+        log.info("找出的emailTaskInfo为：{}", emailTaskInfo);
+
+        if (null != emailTaskInfo){
+            emailTaskInfoRepository.delete(emailTaskInfo);
+            log.info("删除成功！");
+        }
+        return "删除成功";
+    }
+
+    /**
+     * 从库中删除指定jobName的任务。
+     * @param jobName
+     * @return
+     */
+    @GetMapping("/test12/{jobName}")
+    public String deleteTaskByJobName(@PathVariable("jobName") String jobName){
+
+        EmailTaskInfo emailTaskInfo = emailTaskInfoRepository.findByJobName(jobName);
+        log.info("找出的emailTaskInfo为：{}", emailTaskInfo);
+
+        if (null != emailTaskInfo){
+            emailTaskInfoRepository.delete(emailTaskInfo);
+            log.info("删除成功！");
+        }
+        return "删除成功";
+    }
+
+    /**
+     * 修改状态from 0 to 1
+     * @param jobName
+     * @return
+     */
+    @GetMapping("/test13/{jobName}")
+    public String updateTaskStatus(@PathVariable("jobName") String jobName){
+        EmailTaskInfo emailTaskInfo = emailTaskInfoRepository.findByJobName(jobName);
+        log.info("找到的emailTaskInfo为："+emailTaskInfo);
+        if (emailTaskInfo==null){
+            return "未找到，失败";
+        }
+        emailTaskInfoRepository.cancelEmailTask(emailTaskInfo.getId());
+        log.info("现已修改数据库状态为1。。。");
+        EmailTaskInfo emailTaskInfo1 = emailTaskInfoRepository.findByJobName(jobName);
+        log.info("修改后的emailTaskInfo为："+emailTaskInfo1);
+        return "修改成功";
+    }
 }
