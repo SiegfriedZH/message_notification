@@ -1,6 +1,5 @@
 package com.gengyu.msgnotification.controller;
 
-import com.gengyu.msgnotification.entity.EmailEntity;
 import com.gengyu.msgnotification.entity.EmailInfo;
 import com.gengyu.msgnotification.entity.EmailTaskInfo;
 import com.gengyu.msgnotification.enums.EmailTaskStatusEnum;
@@ -8,15 +7,12 @@ import com.gengyu.msgnotification.repository.EmailInfoRepository;
 import com.gengyu.msgnotification.entity.ResponseEntity;
 import com.gengyu.msgnotification.repository.EmailTaskInfoRepository;
 import com.gengyu.msgnotification.service.EmailService;
-import com.gengyu.msgnotification.service.FileService;
 import com.gengyu.msgnotification.service.ScheduledTaskService;
 import com.gengyu.msgnotification.utils.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 /**
  * @author Siegfried GENG
@@ -39,24 +35,10 @@ public class EmailController {
     @Autowired
     private EmailTaskInfoRepository emailTaskInfoRepository;
 
-    @GetMapping("/test01")
-    public String test(){
-        return "去你妹";
-    }
-
-/*    @GetMapping("/test02/{id}")
-    public ResponseEntity<EmailInfoRepository> getEmail(@PathVariable("id")Integer id){
-
-        log.info("传入的id：{}", id);
-//        System.out.println("id="+id);
-        Optional<EmailEntity> optionalEmailEntity = emailRepository.findById(id);
-        EmailEntity emailEntity = optionalEmailEntity.get();
-        if(emailEntity != null){
-            return ResultUtil.succeeded(emailEntity);
-        }
-        return ResultUtil.failed();
-    }*/
-
+    /**
+     * 测试最简单的发送邮件
+     * @return
+     */
     @GetMapping("/test03")
     public String test03(){
         emailService.sendPlainEmail();
@@ -64,14 +46,10 @@ public class EmailController {
         return "已发送";
     }
 
-    @PostMapping("/test04")
-    public String test04(@RequestBody EmailInfo emailInfo){
-        log.info("传入的EmailInfo为：{}", emailInfo);
-        emailService.sendRichEmail(emailInfo);
-        log.info("已发送富文本邮件");
-        return "已发送富文本邮件";
-    }
-
+    /**
+     * 测试定时任务
+     * @return
+     */
     @GetMapping("/test05")
     public String test05(){
         scheduledTaskService.scheduledTest();
@@ -273,6 +251,4 @@ public class EmailController {
         emailService.sendEmailWithAttachment();
         return "test14";
     }
-
-
 }

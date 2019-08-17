@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +55,7 @@ public class UploadController {
      * @return
      */
     @PostMapping("/test02")
-    public String uploadMulti(HttpServletRequest request, String username){
+    public String uploadMulti(HttpServletRequest request, String username) throws IOException {
 
         if (null == request){
             return "请求参数为空！";
@@ -64,12 +66,18 @@ public class UploadController {
             return "上传的附件为空，请选择合适的文件上传！";
         }
 
+        List<MultipartFile> invalidFiles = new ArrayList<>();
+
         for (MultipartFile file : files) {
-            log.info("打印:{}",file);
-            if (StringUtils.isEmpty(file.getName())){
-                log.info("========此文件没有！");
+            if (file.getSize() == 0){
+                invalidFiles.add(file);
+                log.info("======此文件没有，已移除！");
             }
         }
+
+        log.info("invalidFiles的长度为:{}", invalidFiles.size());
+        files.removeAll(invalidFiles);
+        log.info("files移除invalid后的files的长度为:{}", files.size());
 
         return uploadService.uploadMultiFile(files, username);
 

@@ -36,9 +36,10 @@ public class UploadService {
 //        }
 //        log.info("得到的项目路径2为:{}", path1);
 //        rootPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-// / 得到的项目路径1为:/D:/codes/msgnotification/target/classes/
+//      //得到的项目路径1为:/D:/codes/msgnotification/target/classes/
         ROOT_PATH = System.getProperty("user.dir");  /// 得到的项目路径1为:D:\codes\msgnotification
-        log.info("得到的项目路径1为:{}", ROOT_PATH);
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>得到的项目路径为:{}", ROOT_PATH);
+        /// 项目打成jar包运行后，这个路径为jar包所在目录，即target。
     }
 
     /**
@@ -49,19 +50,22 @@ public class UploadService {
      */
     public String uploadSingleFile(MultipartFile file, String username){
 
-        String fileName = file.getOriginalFilename();
+        String fileNameOriginal = file.getOriginalFilename();
 //        String filePath = rootPath + "/static/";
 
-        String localFilePath = ROOT_PATH + File.separator +"upload" + DateUtil.getDateStr() + File.separator;
+        /// 保存的新名字
+        String fileNameSaved = username + "_" + System.currentTimeMillis() + "_" + fileNameOriginal;
+
+        String localFilePath = ROOT_PATH + File.separator +"upload" + File.separator + DateUtil.getDateStr();
         log.info("创建/找到的本地上传目录为：{}",localFilePath);
 
         File localFile = new File(localFilePath);
         if (!localFile.exists()){
             log.info("目录不存在，现在创建！");
-            localFile.mkdir();
+            localFile.mkdirs();
         }
 
-        String localFilePathName = localFilePath + fileName;
+        String localFilePathName = localFilePath + File.separator + fileNameSaved;
         File destLocal = new File(localFilePathName);
         log.info("上传目的地为：{}", destLocal);
 
@@ -74,21 +78,18 @@ public class UploadService {
         }
 
         /// 上传成功后，将数据入库，返回唯一识别标识fileId
-        return this.saveUploadFile(username, fileName, localFilePathName);
+        return this.saveUploadFile(username, fileNameOriginal, fileNameSaved, localFilePathName);
     }
 
-    private String saveUploadFile(String username, String fileName, String filePathName){
+    private String saveUploadFile(String username, String fileNameOriginal, String fileNameSaved, String filePathName){
 
         UploadFileEntity ufEntity = new UploadFileEntity();
-
-        /// 构建保存的文件名，规则是“用户名_当前时间_原始文件名”
-        String fileNameSaved = username + "_" + DateUtil.getDateTimeStr() + "_" + fileName;
 
         /// 构建每个文件的唯一标识id,规则是：当前系统时间戳_随机生成5位字符串
         String fileId = System.currentTimeMillis() + "_" + StringUtil.generateSingleStr(5);
 
         ufEntity.setUsername(username)
-                .setFileNameOriginal(fileName)
+                .setFileNameOriginal(fileNameOriginal)
                 .setFileNameSaved(fileNameSaved)
                 .setFileId(fileId)
                 .setFilePath(filePathName);
