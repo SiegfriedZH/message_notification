@@ -95,7 +95,7 @@ public class EmailService {
             InternetAddress[] sendTo = InternetAddress.parse(toListStr);
             mimeMessage.setRecipients(MimeMessage.RecipientType.TO, sendTo);
 
-            /// 抄送给自己，才能不报错
+            /// 抄送给自己，才能不报错（有时有效，有时无效）
             helper.setCc(new InternetAddress(emailConfig.getFrom()));
 
             String ccList = emailInfo.getCcList();
@@ -119,7 +119,7 @@ public class EmailService {
                     UploadFileEntity file = uploadFileRepository.findByFileId(fileId);
                     if (null != file){
                         helper.addAttachment(file.getFileNameOriginal(), new File(file.getFilePath()));
-                        log.info(">>>>>>>>>>>>找到一个附件，已添加");
+                        log.info(">>>>>>>>>>>>找到一个附件，路径为:{}，已添加到邮件", file.getFilePath());
                     }
                 }
             }

@@ -21,6 +21,9 @@ public class EmailTaskInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name="username")
+    private String username;
+
     /// 用户为每次邮件任务所起的名字，须唯一。
     @Column(name="taskName")
     private String taskName;
@@ -42,6 +45,9 @@ public class EmailTaskInfo {
 
     @Column(name="content")
     private String content;
+
+    @Column(name="attachmentFileIds")
+    private String attachmentFileIds;
 
     ///发邮件的起始时间
     @Column(name="timeToSend")

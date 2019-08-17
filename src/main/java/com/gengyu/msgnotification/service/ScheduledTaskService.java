@@ -32,9 +32,10 @@ public class ScheduledTaskService {
     @Autowired
     private EmailService emailService;
 
-    private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    static private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+
     /**
-     * 无参的定时任务
+     * 测试方法：无参的定时任务
      */
     public void scheduledTest(){
 
@@ -102,8 +103,9 @@ public class ScheduledTaskService {
                     toList, content, subject, timeToSend, dateToSend, interval);
 
             // 1、创建调度器Scheduler
-            SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+//            SchedulerFactory schedulerFactory = new StdSchedulerFactory();
             Scheduler scheduler = schedulerFactory.getScheduler();
+
             // 2、创建JobDetail实例，并与PrintWordsJob类绑定(Job执行内容)
 
             JobDataMap jobDataMap = new JobDataMap();

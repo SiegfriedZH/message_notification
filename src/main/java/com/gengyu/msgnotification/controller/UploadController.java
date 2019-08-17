@@ -4,6 +4,7 @@ import com.gengyu.msgnotification.service.UploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +29,7 @@ public class UploadController {
     private UploadService uploadService;
 
     /**
-     * 上传单个文件
+     * 上传单个附件
      * @return
      */
     @PostMapping("/test01")
@@ -44,6 +45,13 @@ public class UploadController {
 
     }
 
+
+    /**
+     * 上传多个附件
+     * @param request
+     * @param username
+     * @return
+     */
     @PostMapping("/test02")
     public String uploadMulti(HttpServletRequest request, String username){
 
@@ -55,6 +63,14 @@ public class UploadController {
         if (CollectionUtils.isEmpty(files)){
             return "上传的附件为空，请选择合适的文件上传！";
         }
+
+        for (MultipartFile file : files) {
+            log.info("打印:{}",file);
+            if (StringUtils.isEmpty(file.getName())){
+                log.info("========此文件没有！");
+            }
+        }
+
         return uploadService.uploadMultiFile(files, username);
 
     }

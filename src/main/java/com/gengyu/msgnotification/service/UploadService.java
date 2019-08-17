@@ -35,7 +35,8 @@ public class UploadService {
 //            e.printStackTrace();
 //        }
 //        log.info("得到的项目路径2为:{}", path1);
-//        rootPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();    /// 得到的项目路径1为:/D:/codes/msgnotification/target/classes/
+//        rootPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+// / 得到的项目路径1为:/D:/codes/msgnotification/target/classes/
         ROOT_PATH = System.getProperty("user.dir");  /// 得到的项目路径1为:D:\codes\msgnotification
         log.info("得到的项目路径1为:{}", ROOT_PATH);
     }
@@ -52,7 +53,7 @@ public class UploadService {
 //        String filePath = rootPath + "/static/";
 
         String localFilePath = ROOT_PATH + File.separator +"upload" + DateUtil.getDateStr() + File.separator;
-        log.info("创建/找到的本地上传路径为：{}",localFilePath);
+        log.info("创建/找到的本地上传目录为：{}",localFilePath);
 
         File localFile = new File(localFilePath);
         if (!localFile.exists()){
@@ -60,25 +61,20 @@ public class UploadService {
             localFile.mkdir();
         }
 
-//        File dest = new File(filePath + fileName);
-
         String localFilePathName = localFilePath + fileName;
         File destLocal = new File(localFilePathName);
         log.info("上传目的地为：{}", destLocal);
 
         try {
-            file.transferTo(destLocal);
+            file.transferTo(destLocal); /// 上传
         } catch (IOException e) {
             e.printStackTrace();
             log.info(e.toString(), e);
             return "上传失败！";
         }
 
-        /// 上传成功后，需要将数据入库，返回唯一识别标识fileId
-        String fileId = this.saveUploadFile(username, fileName, localFilePathName);
-
-        return fileId;
-
+        /// 上传成功后，将数据入库，返回唯一识别标识fileId
+        return this.saveUploadFile(username, fileName, localFilePathName);
     }
 
     private String saveUploadFile(String username, String fileName, String filePathName){
@@ -103,13 +99,23 @@ public class UploadService {
     }
 
 
+    /**
+     * 上传多个附件
+     * @param files
+     * @param username
+     * @return
+     */
     public String uploadMultiFile(List<MultipartFile> files, String username){
 
+        StringBuffer sb = new StringBuffer();
+
         for (MultipartFile file : files) {
-            this.uploadSingleFile(file, username);
+            sb.append("/").append(this.uploadSingleFile(file, username));
         }
 
-        return "多个附件上传成功！";
+        String result = sb.toString().substring(1);
+        log.info("拼接好的uploadFileIds字符串为：" + result);
+        return result;
     }
 
 }
