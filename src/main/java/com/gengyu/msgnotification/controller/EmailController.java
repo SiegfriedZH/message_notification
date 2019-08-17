@@ -8,6 +8,7 @@ import com.gengyu.msgnotification.repository.EmailInfoRepository;
 import com.gengyu.msgnotification.entity.ResponseEntity;
 import com.gengyu.msgnotification.repository.EmailTaskInfoRepository;
 import com.gengyu.msgnotification.service.EmailService;
+import com.gengyu.msgnotification.service.FileService;
 import com.gengyu.msgnotification.service.ScheduledTaskService;
 import com.gengyu.msgnotification.utils.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +25,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/email")
 @Slf4j
-public class TestController {
-
-    @Autowired
-    private EmailInfoRepository emailRepository;
+public class EmailController {
 
     @Autowired
     private EmailService emailService;
@@ -265,4 +263,16 @@ public class TestController {
         log.info("修改后的emailTaskInfo为："+emailTaskInfo1);
         return "修改成功";
     }
+
+    /**
+     * 测试带附件邮件的发送
+     * @return
+     */
+    @GetMapping("/test14")
+    public String test14(){
+        emailService.sendEmailWithAttachment();
+        return "test14";
+    }
+
+
 }

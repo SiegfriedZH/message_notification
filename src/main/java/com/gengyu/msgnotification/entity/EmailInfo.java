@@ -42,6 +42,9 @@ public class EmailInfo {
     @Column(name="content")
     private String content;
 
+    @Column()
+    private String attachmentFileIds;
+
     ///发邮件的起始时间
     @Column(name="timeToSend")
     private String timeToSend;

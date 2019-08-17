@@ -3,3 +3,8 @@ spring:
     show-sql: true
 #    hibernate:
 #      ddl-auto: update
+
+
+wechat:
+  mpAppId: wxd93bf860fc21b36d
+  mpAppSecret: a4b51abc972b12e26e2864384644eb4e

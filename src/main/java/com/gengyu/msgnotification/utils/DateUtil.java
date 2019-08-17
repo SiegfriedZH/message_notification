@@ -40,4 +40,13 @@ public class DateUtil {
         dateResult.setTime(dateResult.getTime() + 5000);
         return dateResult;
     }
+
+    public static String getDateStr(){
+        return new SimpleDateFormat("yyyyMMdd").format(new Date());
+    }
+
+    public static String getDateTimeStr(){
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    }
+
 }

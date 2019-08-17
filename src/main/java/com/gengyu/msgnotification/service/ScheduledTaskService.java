@@ -29,7 +29,10 @@ public class ScheduledTaskService {
     @Autowired
     private EmailTaskInfoRepository emailTaskInfoRepository;
 
-    SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    @Autowired
+    private EmailService emailService;
+
+    private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
     /**
      * 无参的定时任务
      */
@@ -89,6 +92,7 @@ public class ScheduledTaskService {
             Integer interval = emailInfo.getIntervalTime(); /// 间隔的秒数
 
             String taskName = emailInfo.getTaskName();
+
             String jobName = "job"+taskName;
             String jobGroupName = "jgroup"+taskName;
             String triggerName = "tgr"+taskName;
@@ -145,17 +149,7 @@ public class ScheduledTaskService {
             /// 现在不用这种方式停止，而是一直定时发，直到调用方法取消任务，才停止！
 
             /// 入库操作
-            EmailTaskInfo emailTaskInfo = new EmailTaskInfo();
-            BeanUtils.copyProperties(emailInfo, emailTaskInfo);
-            emailTaskInfo.setJobName(jobName)
-                    .setJobGroupName(jobGroupName)
-                    .setTriggerName(triggerName)
-                    .setTriggerGroupName(triggerGroupName)
-                    .setStatus(EmailTaskStatusEnum.EMAIL_TASK_STATUS_ENUM_ON.getCode());  /// 因为这是启动状态的任务，所以设置为0
-            log.info("========入库前包装好的emailTaskInfo对象为:{}", emailTaskInfo);
-            emailTaskInfoRepository.save(emailTaskInfo);
-            log.info("该EmailTaskInfo已入库");
-
+            emailService.saveEmailTask(emailInfo, jobName, jobGroupName, triggerName, triggerGroupName);
 
         } catch (SchedulerException e) {
             e.printStackTrace();
