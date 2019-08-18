@@ -5,22 +5,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.gengyu.msgnotification.config.WeChatConfig;
 import com.gengyu.msgnotification.entity.OpenIdEntity;
 import com.gengyu.msgnotification.enums.OpenIdStatusEnum;
+import com.gengyu.msgnotification.enums.ResultEnum;
+import com.gengyu.msgnotification.exception.WechatException;
 import com.gengyu.msgnotification.repository.OpenIdRepository;
 import com.gengyu.msgnotification.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
-
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,20 +43,47 @@ public class WeChatService {
     private OpenIdRepository openIdRepository;
 
     /**
+     * 真实的获取openId的方法
+     * @param code
+     * @return
+     */
+    public String getRealOpenId(String code){
+
+        String url = "https://api.weixin.qq.com/sns/oauth2/access_token?"
+                + "appid=" + weChatConfig.getMpAppId()
+                + "secret=" + weChatConfig.getMpAppSecret()
+                + "&code=" + code
+                + "&grant_type=authorization_code";
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(url, String.class);
+        log.info("response={}", response);
+        JSONObject resultJson = JSONObject.parseObject(response);
+        String openid = resultJson.getString("openid");
+
+        /// 入库
+        this.saveOpenIdEntity(openid);
+
+        return openid;
+    }
+
+    /**
      * 模拟调接口去获取用户openId，每隔5分钟过期！
      * @return
      */
-//    @Scheduled(initialDelay = 2000, fixedDelay = 10000)
     public String generateOpenId(){
 
         /// 真正的openId是28位的，如"oDyjy0pvqxQMV66D7rPzekfxPOUg","oDyjy0hVQSWUU4Np3isCFPy_zC2U"
-        /// 为了更真实模拟现实情况，不应该一次性产生固定数目的openId，而应该调一次接口，产生一个，入库一个。
         String openId = StringUtil.generateSingleStr(28);
+        /// 入库
+        this.saveOpenIdEntity(openId);
+        return openId;
+    }
+
+    private void saveOpenIdEntity(String openId){
         OpenIdEntity openIdEntity = new OpenIdEntity();
         openIdEntity.setOpenId(openId).setStatus(OpenIdStatusEnum.OPENID_STATUS_ENUM_ACTIVE.getCode());
         openIdRepository.save(openIdEntity);
         log.info("存入的OPEN_IDs为:{}", openIdEntity);
-        return openId;
     }
 
     /**
@@ -110,9 +134,9 @@ public class WeChatService {
         log.info("现在库里的openId列表长度为:{}，list为:{}", openIdList.size(), openIdList);
 
         if(CollectionUtils.isEmpty(openIdList)){
-            log.info("openIdList为空，没有用户关注，无法发送消息！");
+            throw new WechatException(ResultEnum.RESULT_ENUM_OPENID_NULL);
         } else if(openIdList.size() == 1){
-            return "只有一个openId，须有两个以上才能发送消息！";
+            throw new WechatException(ResultEnum.RESULT_ENUM_OPENID_ONLYONE);
         }
 
         /// 从openIdList取出所有openId字段，转为数组，因为底下的发消息接口的入参需要的数组。
@@ -159,6 +183,5 @@ public class WeChatService {
 
         return resp;
     }
-
 
 }

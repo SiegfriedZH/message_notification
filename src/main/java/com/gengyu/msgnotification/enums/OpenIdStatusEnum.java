@@ -13,12 +13,11 @@ public enum OpenIdStatusEnum {
     OPENID_STATUS_ENUM_INACTIVE(1, "inactive"),
     ;
 
+    private Integer code;
+    private String msg;
+
     OpenIdStatusEnum(Integer code, String msg){
         this.code = code;
         this.msg = msg;
     }
-
-    private Integer code;
-    private String msg;
-
 }

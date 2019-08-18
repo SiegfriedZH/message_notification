@@ -4,6 +4,7 @@ import com.gengyu.msgnotification.service.WeChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -20,7 +21,23 @@ public class WeChatController {
     private WeChatService weChatService;
 
     /**
-     * 模拟获取openId。（群发消息，用户数必须大于等于2，否则报错）
+     * 真实的获取openId方法
+     * 这个接口不能直接请求，只能在微信里通过用户访问重定向的方式请求。格式如下：
+     * https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd93bf860fc21b36d&
+     * redirect_uri=192.168.0.101/wechat/auth&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect
+     * 但一般的个人订阅号没有此权限，死心吧！
+     * @param code
+     */
+    @GetMapping("/auth")
+    public String auth(@RequestParam("code") String code) {
+        log.info("传入的code为:{}", code);
+        return weChatService.getRealOpenId(code);
+    }
+
+
+    /**
+     * 模拟获取openId。
+     * 其实就是用户一点击关注，引导他到一个事先构造好的url，然后就会重定向到这个请求，并携带code，再用code去请求openId。
      * @return
      */
     @GetMapping("/openid")

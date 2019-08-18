@@ -14,12 +14,12 @@ public enum EmailTaskStatusEnum {
     EMAIL_TASK_STATUS_ENUM_OFF(1, "off"),
     ;
 
+    private Integer code;
+    private String msg;
+
     EmailTaskStatusEnum(Integer code, String msg){
         this.code = code;
         this.msg = msg;
     }
-
-    private Integer code;
-    private String msg;
 
 }
