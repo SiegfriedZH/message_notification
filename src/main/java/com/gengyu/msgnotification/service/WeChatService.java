@@ -3,6 +3,9 @@ package com.gengyu.msgnotification.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gengyu.msgnotification.config.WeChatConfig;
+import com.gengyu.msgnotification.entity.OpenIdEntity;
+import com.gengyu.msgnotification.enums.OpenIdStatusEnum;
+import com.gengyu.msgnotification.repository.OpenIdRepository;
 import com.gengyu.msgnotification.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Siegfried GENG
@@ -30,8 +34,6 @@ import java.util.Map;
 @Slf4j
 public class WeChatService {
 
-    private static List<String> OPEN_IDs = new ArrayList<>();
-
     private static String ACCESS_TOKEN = "";
 
     @Autowired
@@ -40,25 +42,24 @@ public class WeChatService {
     @Autowired
     private WeChatConfig weChatConfig;
 
+    @Autowired
+    private OpenIdRepository openIdRepository;
+
     /**
      * 模拟调接口去获取用户openId，每隔5分钟过期！
      * @return
      */
 //    @Scheduled(initialDelay = 2000, fixedDelay = 10000)
-    public List<String> generateOpenIds(){
+    public String generateOpenId(){
 
         /// 真正的openId是28位的，如"oDyjy0pvqxQMV66D7rPzekfxPOUg","oDyjy0hVQSWUU4Np3isCFPy_zC2U"
-//        List<String> strings = StringUtil.generateRandomStr(28, 2);
-////        log.info("得到的randomStr为{}", strings);
-//        /// 给静态全局变量赋值。
-//        OPEN_IDs = strings;
-
-        /// 为了更真实模拟现实情况，不应该一次性产生固定数目的openId，而应该调一次接口，往集合里面放一个。
-        String str = StringUtil.generateSingleStr(28);
-        OPEN_IDs.add(str);
-
-        log.info("现在的OPEN_IDs为:{}", OPEN_IDs);
-        return OPEN_IDs;
+        /// 为了更真实模拟现实情况，不应该一次性产生固定数目的openId，而应该调一次接口，产生一个，入库一个。
+        String openId = StringUtil.generateSingleStr(28);
+        OpenIdEntity openIdEntity = new OpenIdEntity();
+        openIdEntity.setOpenId(openId).setStatus(OpenIdStatusEnum.OPENID_STATUS_ENUM_ACTIVE.getCode());
+        openIdRepository.save(openIdEntity);
+        log.info("存入的OPEN_IDs为:{}", openIdEntity);
+        return openId;
     }
 
     /**
@@ -77,7 +78,6 @@ public class WeChatService {
 
         JSONObject resultJson = JSONObject.parseObject(response);
         String accessToken = resultJson.getString("access_token");
-        log.info("解析到的access_token为：{}", accessToken);
 
         ACCESS_TOKEN = accessToken;
 //        log.info("现在的OPEN_IDs为:{}", OPEN_IDs);
@@ -88,7 +88,7 @@ public class WeChatService {
 
     /**
      * 模拟发消息
-     * 这里需要三个参数，access_token，OPEN_IDs，text
+     * 这里需要三个参数，自己的access_token，OPEN_IDs，text
      * @param text
      * @return
      */
@@ -104,24 +104,26 @@ public class WeChatService {
                 log.info("无法获取ACCESS_TOKEN");
                 return "无法获取ACCESS_TOKEN";
             }
-
         }
 
-        if(CollectionUtils.isEmpty(OPEN_IDs)){
-            log.info("OPEN_IDs为空，现在去获取");
-            OPEN_IDs = this.generateOpenIds();
-            log.info("获取到的OPEN_IDs为:{}", OPEN_IDs);
-        } else if(OPEN_IDs.size() == 1){
-            return "只有一个openId，请调接口产生更多openId";
+        List<OpenIdEntity> openIdList = openIdRepository.findAll();
+        log.info("现在库里的openId列表长度为:{}，list为:{}", openIdList.size(), openIdList);
+
+        if(CollectionUtils.isEmpty(openIdList)){
+            log.info("openIdList为空，没有用户关注，无法发送消息！");
+        } else if(openIdList.size() == 1){
+            return "只有一个openId，须有两个以上才能发送消息！";
         }
 
-        /// 将OPEN_IDs集合转为数组，因为底下的发消息接口的入参需要的数组。
-        /// 本可以直接生成数组，这里为了练习集合与数组的转换。
-        String[] openIds = OPEN_IDs.toArray(new String[]{});
+        /// 从openIdList取出所有openId字段，转为数组，因为底下的发消息接口的入参需要的数组。
+        List<String> openIdStrList = openIdList.stream().map(e -> e.getOpenId()).collect(Collectors.toList());
+        String[] openIds = openIdStrList.toArray(new String[]{});
+
         log.info("转为数组的openIds为：{}, 该数组的长度为:{}", openIds, openIds.length);
 
+        String resp = "";
+
         try {
-            String resp = "";//响应
             String reqUrl = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token="+ ACCESS_TOKEN;
 
             // 构造httprequest设置
@@ -155,7 +157,7 @@ public class WeChatService {
             e.printStackTrace();
         }
 
-        return "这是发送消息功能";
+        return resp;
     }
 
 

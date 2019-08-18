@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class StringUtil {
 
-    public static List<String> generateRandomStr(int length, int num){
+/*    public static List<String> generateRandomStr(int length, int num){
         String base = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Random random = new Random();
         List<String> stringList = new ArrayList<>();
@@ -23,10 +23,8 @@ public class StringUtil {
             }
             stringList.add(sb.toString());
         }
-
         return stringList;
-
-    }
+    }*/
 
     public static String generateSingleStr(int length){
         String base = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
