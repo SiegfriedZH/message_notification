@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 /**
@@ -26,13 +28,16 @@ public class WeChatController {
      * https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd93bf860fc21b36d&
      * redirect_uri=192.168.0.101/wechat/auth&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect
      * 但一般的个人订阅号没有此权限，死心吧！
+     *
+     * 另：结合中文乱码问题，目前GET方式怎么避免乱码，在SpringBoot中不好做，所以改成POST方式！
+     * 但是POST方式，用body体里的text方式传参，又接收不到，所以最后还是要改成GET方式！实际也不会出现中文。
      * @param code
      */
-    @GetMapping("/auth")
-    public String auth(@RequestParam("code") String code) {
-        log.info("传入的code为:{}", code);
-        return "aaa";
-//        return weChatService.getRealOpenId(code);
+    @PostMapping("/auth")
+    public String auth(@RequestBody String code) throws UnsupportedEncodingException {
+        String codeEncoded = URLDecoder.decode(code, "UTF-8");
+        log.info("传入的code为:{}", codeEncoded);
+        return weChatService.getRealOpenId(code);
     }
 
 

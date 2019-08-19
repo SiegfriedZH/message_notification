@@ -26,7 +26,7 @@ public class MyInterceptor implements HandlerInterceptor{
             log.info("没有传code参数");
             return false;
         }
-
+        log.info("拦截器中传入的code为：{}",code);
         return true;
     }
 
