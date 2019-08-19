@@ -31,7 +31,8 @@ public class WeChatController {
     @GetMapping("/auth")
     public String auth(@RequestParam("code") String code) {
         log.info("传入的code为:{}", code);
-        return weChatService.getRealOpenId(code);
+        return "aaa";
+//        return weChatService.getRealOpenId(code);
     }
 
 
