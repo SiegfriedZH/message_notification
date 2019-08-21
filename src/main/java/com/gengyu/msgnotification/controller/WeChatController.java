@@ -33,11 +33,12 @@ public class WeChatController {
      * 但是POST方式，用body体里的text方式传参，又接收不到，所以最后还是要改成GET方式！实际也不会出现中文。
      * @param code
      */
-    @PostMapping("/auth")
-    public String auth(@RequestBody String code) throws UnsupportedEncodingException {
+    @GetMapping("/auth")
+    public String auth(@RequestParam String code) throws UnsupportedEncodingException {
         String codeEncoded = URLDecoder.decode(code, "UTF-8");
         log.info("传入的code为:{}", codeEncoded);
-        return weChatService.getRealOpenId(code);
+        return "啊啊啊";
+//        return weChatService.getRealOpenId(code);
     }
 
 
