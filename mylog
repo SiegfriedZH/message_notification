@@ -1,0 +1,65 @@
+2019-08-21 21:10:48.415  INFO 14176 --- [main] c.g.m.MsgnotificationApplication         : Starting MsgnotificationApplication on YH-20190728XMGV with PID 14176 (D:\codes\msgnotification\target\classes started by user in D:\codes\msgnotification)
+2019-08-21 21:10:48.471  INFO 14176 --- [main] c.g.m.MsgnotificationApplication         : No active profile set, falling back to default profiles: default
+2019-08-21 21:10:53.394  INFO 14176 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data repositories in DEFAULT mode.
+2019-08-21 21:10:54.607  INFO 14176 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 1125ms. Found 4 repository interfaces.
+2019-08-21 21:10:55.312  WARN 14176 --- [main] o.m.s.mapper.ClassPathMapperScanner      : No MyBatis mapper was found in '[com.gengyu.msgnotification]' package. Please check your configuration.
+2019-08-21 21:10:56.229  INFO 14176 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$fa80b3a7] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-08-21 21:10:57.639  INFO 14176 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8090 (http)
+2019-08-21 21:10:57.777  INFO 14176 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2019-08-21 21:10:57.778  INFO 14176 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.22]
+2019-08-21 21:10:58.261  INFO 14176 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2019-08-21 21:10:58.262  INFO 14176 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 9249 ms
+2019-08-21 21:10:58.489  INFO 14176 --- [main] c.g.m.t.QuartzServletContextListener     : Quartz Initializer Servlet loaded, initializing Scheduler...
+2019-08-21 21:10:58.620  INFO 14176 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2019-08-21 21:10:58.624  INFO 14176 --- [main] org.quartz.simpl.SimpleThreadPool        : Job execution threads will use class loader of thread: main
+2019-08-21 21:10:58.640  INFO 14176 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2019-08-21 21:10:58.640  INFO 14176 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.3.1 created.
+2019-08-21 21:10:58.653  INFO 14176 --- [main] org.quartz.simpl.RAMJobStore             : RAMJobStore initialized.
+2019-08-21 21:10:58.655  INFO 14176 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.3.1) 'DefaultQuartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2019-08-21 21:10:58.655  INFO 14176 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'DefaultQuartzScheduler' initialized from default resource file in Quartz package: 'quartz.properties'
+2019-08-21 21:10:58.656  INFO 14176 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.3.1
+2019-08-21 21:10:58.656  INFO 14176 --- [main] org.quartz.core.QuartzScheduler          : Scheduler DefaultQuartzScheduler_$_NON_CLUSTERED started.
+2019-08-21 21:10:58.656  INFO 14176 --- [main] c.g.m.t.QuartzServletContextListener     : Scheduler has been started...
+2019-08-21 21:10:58.656  INFO 14176 --- [main] c.g.m.t.QuartzServletContextListener     : Storing the Quartz Scheduler Factory in the servlet context at key: org.quartz.impl.StdSchedulerFactory.KEY
+2019-08-21 21:10:59.299  INFO 14176 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2019-08-21 21:10:59.304  WARN 14176 --- [main] com.zaxxer.hikari.util.DriverDataSource  : Registered driver with driverClassName=com.mysql.jdbc.Driver was not found, trying direct instantiation.
+2019-08-21 21:11:00.709  INFO 14176 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2019-08-21 21:11:01.338  INFO 14176 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2019-08-21 21:11:02.098  INFO 14176 --- [main] org.hibernate.Version                    : HHH000412: Hibernate Core {5.3.10.Final}
+2019-08-21 21:11:02.105  INFO 14176 --- [main] org.hibernate.cfg.Environment            : HHH000206: hibernate.properties not found
+2019-08-21 21:11:03.008  INFO 14176 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.0.4.Final}
+2019-08-21 21:11:03.710  INFO 14176 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2019-08-21 21:11:06.291  INFO 14176 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2019-08-21 21:11:07.702  INFO 14176 --- [main] c.g.m.service.UploadService              : >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>得到的项目路径为:D:\codes\msgnotification
+2019-08-21 21:11:08.307  INFO 14176 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2019-08-21 21:11:08.372  WARN 14176 --- [main] aWebConfiguration$JpaWebMvcConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2019-08-21 21:11:08.445  INFO 14176 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2019-08-21 21:11:09.332  INFO 14176 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2019-08-21 21:11:09.334  INFO 14176 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2019-08-21 21:11:09.334  INFO 14176 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.3.1 created.
+2019-08-21 21:11:09.334  INFO 14176 --- [main] org.quartz.simpl.RAMJobStore             : RAMJobStore initialized.
+2019-08-21 21:11:09.334  INFO 14176 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.3.1) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2019-08-21 21:11:09.335  INFO 14176 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2019-08-21 21:11:09.335  INFO 14176 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.3.1
+2019-08-21 21:11:09.335  INFO 14176 --- [main] org.quartz.core.QuartzScheduler          : JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@9d99851
+2019-08-21 21:11:09.348  INFO 14176 --- [main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2019-08-21 21:11:09.430  INFO 14176 --- [main] o.s.s.quartz.SchedulerFactoryBean        : Starting Quartz Scheduler now
+2019-08-21 21:11:09.431  INFO 14176 --- [main] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2019-08-21 21:11:09.704  INFO 14176 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8090 (http) with context path ''
+2019-08-21 21:11:09.741  INFO 14176 --- [main] c.g.m.MsgnotificationApplication         : Started MsgnotificationApplication in 24.77 seconds (JVM running for 33.752)

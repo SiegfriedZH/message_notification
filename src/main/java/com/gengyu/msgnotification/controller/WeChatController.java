@@ -1,6 +1,8 @@
 package com.gengyu.msgnotification.controller;
 
 import com.gengyu.msgnotification.service.WeChatService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/wechat")
 @Slf4j
+@Api(value="微信功能相关接口")
 public class WeChatController {
 
     @Autowired
@@ -35,18 +38,18 @@ public class WeChatController {
      */
     @GetMapping("/auth")
     public String auth(@RequestParam String code) throws UnsupportedEncodingException {
-        String codeEncoded = URLDecoder.decode(code, "UTF-8");
-        log.info("传入的code为:{}", codeEncoded);
+        String codeDecoded = URLDecoder.decode(code, "UTF-8");
+        log.info("传入的code为:{}", codeDecoded);
         return "啊啊啊";
 //        return weChatService.getRealOpenId(code);
     }
-
 
     /**
      * 模拟获取openId。
      * 其实就是用户一点击关注，引导他到一个事先构造好的url，然后就会重定向到这个请求，并携带code，再用code去请求openId。
      * @return
      */
+    @ApiOperation(value = "获取openId", response = String.class)
     @GetMapping("/openid")
     public String getOpenId(){
         return weChatService.generateOpenId();
