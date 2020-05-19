@@ -77,7 +77,7 @@ public class ScheduledTaskService {
     }
 
     /**
-     * 有参的定时任务，将EmailInfo传给定时任务类，定时任务类再调用发邮件的Service。
+     * 有参的定时任务，将EmailInfo传递给时任务类，定时任务类再调用发邮件的Service。
      * @param emailInfo
      */
     @Transactional

@@ -33,8 +33,7 @@ public class MyJob implements Job {
             e1.printStackTrace();
         }
         WebApplicationContext cxt = (WebApplicationContext) context.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-        EmailService emailService = (EmailService) cxt.getBean("emailService");
-        return emailService;
+        return (EmailService) cxt.getBean("emailService");
     }
 
     @Override

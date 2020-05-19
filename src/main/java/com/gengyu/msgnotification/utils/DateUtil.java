@@ -16,8 +16,7 @@ public class DateUtil {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static Date convertStrToDate(String dateStr) throws ParseException {
-        Date date = sdf.parse(dateStr);
-        return date;
+        return sdf.parse(dateStr);
     }
 
     public static Date validateDateTime(Date dateExpected){

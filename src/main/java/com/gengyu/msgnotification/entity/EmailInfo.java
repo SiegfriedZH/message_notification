@@ -67,6 +67,6 @@ public class EmailInfo {
 
     ///发邮件间隔时间（小时）
     @Column(name="intervalTime")
-    @ApiModelProperty(value = "邮件发送的起始时间", name = "timeToSend",required = true)
+    @ApiModelProperty(value = "邮件发送的间隔时间", name = "intervalTime",required = true)
     private Integer intervalTime;
 }
