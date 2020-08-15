@@ -150,7 +150,7 @@ public class EmailService {
             helper.setSubject("邮件主题(包含附件)");
 
             /// 加上图片内容后，就会报Failed messages: com.sun.mail.smtp.SMTPSendFailedException: 554
-            /// 可能是被当成垃圾邮件。没有这个内容就不报错！
+            /// 可能是被当成垃圾邮件。去掉这个内容就不报错！
             String content = "<html><head></head><body><h3 style=\"color:red\">"
                     + "去你妹的！！！" +"</h3></body></html>"
 //                    + "测试图片<br/><a href='http://https://ask.csdn.net/questions/751932'>" +
@@ -168,10 +168,8 @@ public class EmailService {
 //            String attachmentName = "d:/test/111.jpg";
 //            String attachmentName = "d:/test/abc.txt";
 
-//            String rootPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-            String rootPath = UploadService.ROOT_PATH;
-
-            /// 这里怎么获取文件名？？？？
+            String rootPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+//            String rootPath = UploadService.CLASS_PATH;
 
             /// helper本身就可以添加附件，不用这么麻烦
             helper.addAttachment(

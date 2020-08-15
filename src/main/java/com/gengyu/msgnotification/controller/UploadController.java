@@ -42,11 +42,19 @@ public class UploadController {
         if (null == file){
             return "上传的附件为空，请选择合适的文件上传！";
         }
-        String fileId = uploadService.uploadSingleFile(file, username);
-
-        return fileId;
-
+        return uploadService.uploadSingleFile(file, username, 1);
     }
+
+    @PostMapping("/test03")
+    public String uploadSingleWithReturnedPath(@RequestParam("attachment") MultipartFile file, String username) {
+
+        log.info("传入的username为:{}", username);
+        if (null == file){
+            return "上传的附件为空，请选择合适的文件上传！";
+        }
+        return uploadService.uploadSingleFile(file, username, 2); //mode为2返回文件路径
+    }
+
 
 
     /**

@@ -7,7 +7,15 @@
 <body>
 <h3>上传文件</h3>
 
+这是普通返回fileId
 <form method="post" action="/upload/test01" enctype="multipart/form-data">
+    <input type="hidden" name="username" value="gengyu">
+    <input type="file" name="attachment"><br>
+    <input type="submit" value="提交">
+</form>
+<hr/>
+这是返回文件路径
+<form method="post" action="/upload/test03" enctype="multipart/form-data">
     <input type="hidden" name="username" value="gengyu">
     <input type="file" name="attachment"><br>
     <input type="submit" value="提交">

@@ -7,6 +7,7 @@ import com.gengyu.msgnotification.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -23,6 +24,7 @@ import java.util.List;
 public class UploadService {
 
     public static String ROOT_PATH = "";
+    public static String CLASS_PATH = "";
 
     @Autowired
     private UploadFileRepository uploadFileRepository;
@@ -35,8 +37,7 @@ public class UploadService {
 //            e.printStackTrace();
 //        }
 //        log.info("得到的项目路径2为:{}", path1);
-//        rootPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-//      //得到的项目路径1为:/D:/codes/msgnotification/target/classes/
+        CLASS_PATH = ClassUtils.getDefaultClassLoader().getResource("").getPath();  //得到的项目路径1为:/D:/codes/msgnotification/target/classes/
         ROOT_PATH = System.getProperty("user.dir");  /// 得到的项目路径1为:D:\codes\msgnotification
         log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>得到的项目路径为:{}", ROOT_PATH);
         /// 项目打成jar包运行后，这个路径为jar包所在目录，即target。
@@ -48,7 +49,7 @@ public class UploadService {
      * @param username
      * @return
      */
-    public String uploadSingleFile(MultipartFile file, String username){
+    public String uploadSingleFile(MultipartFile file, String username, int mode){
 
         String fileNameOriginal = file.getOriginalFilename();
 //        String filePath = rootPath + "/static/";
@@ -77,8 +78,15 @@ public class UploadService {
             return "上传失败！";
         }
 
-        /// 上传成功后，将数据入库，返回唯一识别标识fileId
-        return this.saveUploadFile(username, fileNameOriginal, fileNameSaved, localFilePathName);
+        String result = "";
+        if (mode == 1) { // 返回fileId
+            /// 上传成功后，将数据入库，返回唯一识别标识fileId
+            result = this.saveUploadFile(username, fileNameOriginal, fileNameSaved, localFilePathName);
+        } else if (mode == 2) {  // 返回文件路径
+            result = localFilePathName;
+        }
+
+        return result;
     }
 
     private String saveUploadFile(String username, String fileNameOriginal, String fileNameSaved, String filePathName){
@@ -111,7 +119,7 @@ public class UploadService {
         StringBuffer sb = new StringBuffer();
 
         for (MultipartFile file : files) {
-            sb.append("/").append(this.uploadSingleFile(file, username));
+            sb.append("/").append(this.uploadSingleFile(file, username, 1));
         }
 
         String result = sb.toString().substring(1);
