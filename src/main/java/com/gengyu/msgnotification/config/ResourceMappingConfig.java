@@ -13,6 +13,7 @@ public class ResourceMappingConfig implements WebMvcConfigurer {
         // 将本地资源路径映射为网络路径
         //Windows下
         registry.addResourceHandler("/uploads/**").addResourceLocations("file:D:/codes/message_notification/upload/");
+        // 前端访问路径：http://xx.xx.xx.xx:xx/uploads/文件名
         //Mac或Linux下(没有CDEF盘符)
 //        registry.addResourceHandler("/uploads/**").addResourceLocations("file:/Users/uploads/");
 //        super.addResourceHandlers(registry);
