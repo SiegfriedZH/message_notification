@@ -4,7 +4,6 @@ import com.gengyu.msgnotification.service.UploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,8 +54,6 @@ public class UploadController {
         return uploadService.uploadSingleFile(file, username, 2); //mode为2返回文件路径
     }
 
-
-
     /**
      * 上传多个附件
      * @param request
@@ -91,6 +88,5 @@ public class UploadController {
         return uploadService.uploadMultiFile(files, username);
 
     }
-
 
 }
